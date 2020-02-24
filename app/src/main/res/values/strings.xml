@@ -2,8 +2,8 @@
     <string name="app_name">DigitalLeashParent</string>
     <string name="btnUpdate">Update</string>
     <string name="txtViewParentLoc">Parent Location</string>
-    <string name="txtViewParentUserName">Parent User Name</string>
-    <string name="txtViewRadius">Radius</string>
+    <string name="txtViewParentUserName">Parent Username</string>
+    <string name="txtViewRadius">Radius (mi)</string>
     <string name="btnSave">Save Settings</string>
     <string name="btnAdd">Add Child</string>
     <string name="txtViewChildren"></string>
@@ -12,8 +12,8 @@
     <string name="editTextParentUserName">Parent Username</string>
     <string name="editTextRadius">Radius</string>
     <string name="editTextAddChild">Child Name</string>
-    <string name="btnRedActClose">Close</string>
-    <string name="btnGreenActClose">Close</string>
+    <string name="btnRedActBack">Back</string>
+    <string name="btnGreenActBack">Back</string>
 
 </resources>
 

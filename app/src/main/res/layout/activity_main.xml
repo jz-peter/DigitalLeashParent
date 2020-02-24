@@ -4,22 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/holo_blue_dark"
     tools:context=".MainActivity">
 
 
     <TextView
         android:id="@+id/txtViewParentLoc"
-        android:layout_width="148dp"
-        android:layout_height="41dp"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/transparent"
         android:text="@string/txtViewParentLoc"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="spread_inside" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <LinearLayout
@@ -28,36 +28,34 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="1dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtViewParentLoc">
 
         <TextView
             android:id="@+id/txtViewParentLat"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:ems="10"
-            android:inputType="textPersonName"
+            android:gravity="center_vertical"
+            android:background="@android:color/white"
             android:text="@string/txtViewParentLat" />
 
 
         <TextView
             android:id="@+id/txtViewParentLong"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:ems="10"
-            android:inputType="textPersonName"
+            android:gravity="center_vertical"
+            android:background="@android:color/white"
             android:text="@string/txtViewParentLong" />
 
 
         <Button
             android:id="@+id/btnUpdate"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="onUpdate"
@@ -70,9 +68,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="14dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
@@ -83,15 +79,18 @@
         <TextView
             android:id="@+id/txtViewParentUserName"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"
             android:text="@string/txtViewParentUserName" />
 
         <EditText
             android:id="@+id/editTextParentUserName"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:layout_weight="1"
+            android:background="@android:color/white"
             android:ems="10"
             android:hint="@string/editTextParentUserName"
             android:inputType="textPersonName" />
@@ -104,9 +103,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="13dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="24dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/btnSave"
         app:layout_constraintEnd_toEndOf="parent"
@@ -116,15 +113,18 @@
         <TextView
             android:id="@+id/txtViewRadius"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:background="@android:color/transparent"
             android:text="@string/txtViewRadius" />
 
         <EditText
             android:id="@+id/editTextRadius"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:layout_weight="1"
+            android:background="@android:color/white"
             android:ems="10"
             android:hint="@string/editTextRadius"
             android:inputType="textPersonName" />
@@ -134,15 +134,11 @@
 
     <Button
         android:id="@+id/btnSave"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="269dp"
         android:onClick="onSave"
         android:text="@string/btnSave"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/linearLayout4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
@@ -152,11 +148,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/listViewChild"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -166,43 +160,36 @@
 
         <EditText
             android:id="@+id/editTextAddChild"
+            android:background="@android:color/white"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_height="35dp"
             android:layout_weight="1"
             android:ems="10"
             android:hint="@string/editTextAddChild"
-            android:inputType="textPersonName"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="264dp" />
+            android:inputType="textPersonName" />
 
         <Button
             android:id="@+id/btnAdd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
             android:layout_weight="2"
             android:onClick="onAdd"
-            android:text="@string/btnAdd"
-            tools:layout_editor_absoluteX="238dp"
-            tools:layout_editor_absoluteY="264dp" />
+            android:text="@string/btnAdd" />
 
     </LinearLayout>
 
     <ListView
         android:id="@+id/listViewChild"
-        android:layout_width="258dp"
-        android:layout_height="122dp"
+        android:background="@android:color/white"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout4"
-        app:layout_constraintVertical_bias="0.432" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
 
 
 </android.support.constraint.ConstraintLayout>

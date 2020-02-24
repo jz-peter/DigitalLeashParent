@@ -1,6 +1,7 @@
 package io.turntotech.android.digitalleashparent;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -9,6 +10,8 @@ import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -33,7 +36,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.net.URL;
-
 
 
 public class MainActivity extends AppCompatActivity {
@@ -63,9 +65,7 @@ public class MainActivity extends AppCompatActivity {
     EditText editTextAddChild;
     Button btnAdd;
 
-
     List<String> childrenUserNames;
-
     ArrayAdapter arrayAdapter;
 
     double distanceInMiles;
@@ -77,25 +77,22 @@ public class MainActivity extends AppCompatActivity {
 
         setup();
         readFromSharedPref();
-
+        updateLastLocation();
     }
 
     private void readFromSharedPref() {
 
         sharedPrefs = getSharedPreferences("parentInfo", MODE_PRIVATE);
 
-
         String parentUsername = sharedPrefs.getString("Parent Username", "");
         String parentRadius = sharedPrefs.getString("Radius", "");
         Set<String> children = sharedPrefs.getStringSet("Child Username", new HashSet<String>());
-
 
         editTextParentUserName.setText(parentUsername);
         editTextRadius.setText(parentRadius);
 
         childrenUserNames.addAll(children);
         arrayAdapter.notifyDataSetChanged();
-
     }
 
     private void setup() {
@@ -127,8 +124,9 @@ public class MainActivity extends AppCompatActivity {
 
                 childrenUserNames.remove(position);
                 arrayAdapter.notifyDataSetChanged();
-                return true;
+                Toast.makeText(getBaseContext(), "Child Removed", Toast.LENGTH_LONG).show();
 
+                return true;
 
             }
         });
@@ -144,28 +142,22 @@ public class MainActivity extends AppCompatActivity {
                 String child_username = childrenUserNames.get(position);
 
                 getServerData.execute(child_username);
-
-
             }
-
         });
     }
 
 
     //Get current location
     public void updateLastLocation() {
-
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "Need Location Permission", Toast.LENGTH_LONG)
                     .show();
             return;
-
         }
 
         mFusedLocationClient.getLastLocation()
-
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
@@ -179,23 +171,16 @@ public class MainActivity extends AppCompatActivity {
 
                             txtViewParentLat.setText(Double.toString(location.getLatitude()));
                             txtViewParentLong.setText(Double.toString(location.getLongitude()));
-
                         }
                     }
-
                 });
-
     }
-
 
     //"Update" button click
     public void onUpdate(View view) {
-
-        updateLastLocation();
-
         Toast.makeText(this, "Your Current Location", Toast.LENGTH_LONG).show();
+        updateLastLocation();
     }
-
 
     //"Save" button click
     public void onSave(View view) {
@@ -214,37 +199,33 @@ public class MainActivity extends AppCompatActivity {
             children.add(childName);
         }
 
-
         editor.putStringSet("Child Username", children);
-
         editor.commit();
 
-
-        Toast.makeText(this, "Settings Saved", Toast.LENGTH_LONG).show();
-
+        //hide keyboard
+        hideKeyboard(getBaseContext(), view);
+        Toast.makeText(this, "Saved", Toast.LENGTH_LONG).show();
     }
-
 
     //"Add Child" button click
     public void onAdd(View view) {
 
         //add elements to List
         childrenUserNames.add(editTextAddChild.getText().toString());
-
-
         arrayAdapter.notifyDataSetChanged();
 
         Toast.makeText(this, "Child Added", Toast.LENGTH_LONG).show();
+        editTextAddChild.setText("");
 
+        //hide keyboard
+        hideKeyboard(getBaseContext(), view);
     }
 
 
     //Get JSON data from server
     public void getJsonData(String child_username) throws IOException, JSONException {
 
-
         String parent_username = "" + editTextParentUserName.getText();
-
         String urlString = "https://turntotech.firebaseio.com/digitalleash/users/" + parent_username + "/" + child_username + ".json";
         URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -258,91 +239,61 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("\nSending 'GET' request to URL : " + url);
         System.out.println("Response Code : " + responseCode);
 
-        BufferedReader buffered = new BufferedReader(
-                new InputStreamReader(conn.getInputStream()));
+        BufferedReader buffered = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String output;
         StringBuffer response = new StringBuffer();
 
         while ((output = buffered.readLine()) != null) {
             response.append(output);
         }
-
         conn.disconnect();
 
         //print result
         System.out.println(response.toString());
 
-
         parseAndPrintJson(response.toString());
     }
-
 
     //Parse and print JSON data
     public void parseAndPrintJson(String response) throws JSONException {
 
 //        try {
-            JSONObject jsonObject = new JSONObject(response);
+        JSONObject jsonObject = new JSONObject(response);
 
-            StringBuilder stringBuild = new StringBuilder();
+        StringBuilder stringBuild = new StringBuilder();
 
+        double latitude = jsonObject.getDouble("latitude");
+        double longitude = jsonObject.getDouble("longitude");
+        double timestamp = jsonObject.getDouble("timestamp");
 
-            double latitude = jsonObject.getDouble("latitude");
-            double longitude = jsonObject.getDouble("longitude");
-            double timestamp = jsonObject.getDouble("timestamp");
+        stringBuild.append("\nlatitude: " + latitude);
+        stringBuild.append("  longitude: " + longitude);
+        stringBuild.append(" timestamp: " + timestamp);
 
+        System.out.println(latitude + longitude + timestamp);
 
-            stringBuild.append("\nlatitude: " + latitude);
-            stringBuild.append("  longitude: " + longitude);
-            stringBuild.append(" timestamp: " + timestamp);
+        //Parent Latitude and Longitude text to string
+        String parLat = txtViewParentLat.getText().toString();
+        String parLong = txtViewParentLong.getText().toString();
 
+        //Parent Latitude and Longitude String to double
+        double parentLat = Double.parseDouble(parLat);
+        double parentLong = Double.parseDouble(parLong);
 
-            System.out.println(latitude + longitude + timestamp);
+        //Child to parent distance
+        Location myLocation = new Location("");
+        myLocation.setLatitude(parentLat);
+        myLocation.setLongitude(parentLong);
 
+        Location targetLocation = new Location("");
+        targetLocation.setLatitude(latitude);
+        targetLocation.setLongitude(longitude);
 
-            //Parent Latitude and Longitude text to string
-            String parLat = txtViewParentLat.getText().toString();
-            String parLong = txtViewParentLong.getText().toString();
+        double distanceInMeters = targetLocation.distanceTo(myLocation);
+        distanceInMiles = distanceInMeters * 0.000621;
 
-            //Parent Latitude and Longitude String to double
-            double parentLat = Double.parseDouble(parLat);
-            double parentLong = Double.parseDouble(parLong);
-
-
-            //Child to parent distance
-            Location myLocation = new Location("");
-            myLocation.setLatitude(parentLat);
-            myLocation.setLongitude(parentLong);
-
-            Location targetLocation = new Location("");
-            targetLocation.setLatitude(latitude);
-            targetLocation.setLongitude(longitude);
-
-            double distanceInMeters = targetLocation.distanceTo(myLocation);
-            distanceInMiles = distanceInMeters * 0.000621;
-
-
-            System.out.println(distanceInMiles);
-
-  //          return true;
-
-            //create pop up
-            //Toast.makeText(this.getBaseContext(), stringBuild.toString(), Toast.LENGTH_LONG).show();
-
-//        } catch (JSONException e) {
-//            //Log.e(tag,e.getMessage());
-//
-//            this.runOnUiThread(new Runnable() {
-//                public void run() {
-//                    Toast.makeText(MainActivity.this.getBaseContext(), "Error in parsing", Toast.LENGTH_LONG).show();
-//                }
-//            });
-//
-//
-//            return false;
-//
-//        }
+        System.out.println(distanceInMiles);
     }
-
 
     //Check if child is within radius of parent then display correct activity screen
     public void childParentRange(double distanceInMiles) {
@@ -351,57 +302,51 @@ public class MainActivity extends AppCompatActivity {
         double range = Double.parseDouble(rad);
 
         if (distanceInMiles <= range) {
-
             Intent withinRange = new Intent(MainActivity.this, ActivityGreen.class);
             startActivity(withinRange);
 
         } else {
-
             Intent outOfRange = new Intent(MainActivity.this, ActivityRed.class);
             startActivity(outOfRange);
         }
     }
 
+    public static void hideKeyboard(Context context, View view){
+        InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+
     public class GetServerData extends AsyncTask<String, String, Boolean> {
 
+        protected void onPreExecute() {
+        }
 
-            protected void onPreExecute() {
+        @Override
+        protected Boolean doInBackground(String... child_username) {
 
+            try {
+                getJsonData(child_username[0]);
+                return true;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
             }
+        }
 
-            @Override
-            protected Boolean doInBackground(String... child_username) {
+        @Override
+        protected void onPostExecute(Boolean result) {
 
-                try {
-
-                    getJsonData(child_username[0]);
-
-                    return true;
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-
-                    return false;
-                }
-
-
-            }
-
-            @Override
-            protected void onPostExecute(Boolean result) {
-
-                // do something UI
-                if(result){
-                    childParentRange(distanceInMiles);
-                }
-                else {
-                    Toast.makeText(MainActivity.this.getBaseContext(), "Error in parsing", Toast.LENGTH_LONG).show();
-                }
-
-
+            // do something UI
+            if (result) {
+                childParentRange(distanceInMiles);
+            } else {
+                Toast.makeText(MainActivity.this.getBaseContext(), "Error in parsing", Toast.LENGTH_LONG).show();
             }
         }
     }
+}
 
 
 

@@ -12,7 +12,7 @@ public class ActivityGreen extends AppCompatActivity {
         setContentView(R.layout.activity_green);
     }
 
-    public void onClose(View view) {
+    public void onBack(View view) {
 
         finish();
     }
